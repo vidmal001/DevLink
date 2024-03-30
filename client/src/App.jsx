@@ -6,7 +6,7 @@ import { lookInSession } from "./common/session";
 import Editor from "./pages/editor.pages";
 import HomePage from "./pages/home.page";
 import SearchPage from "./pages/search.page";
-import PageNotFound from './pages/404.page';
+import PageNotFound from "./pages/404.page";
 import ProfilePage from "./pages/profile.page";
 import BlogPage from "./pages/blog.page";
 import SideNav from "./components/sidenavbar.component";
@@ -17,59 +17,70 @@ import ManageBlogs from "./pages/manage-blogs.page";
 
 export const UserContext = createContext({});
 
+export const ThemeContext = createContext({});
+
 const App = () => {
   const [userAuth, setUserAuth] = useState({});
 
+  const [theme, setTheme] = useState("light");
+
   useEffect(() => {
     let userInSession = lookInSession("user");
-    setUserAuth(
-      userInSession ? JSON.parse(userInSession) : { access_token: null }
-    );
+    let themeInSession = lookInSession("theme");
+  
+    if (userInSession) {
+      setUserAuth(JSON.parse(userInSession));
+    }
+  
+    if (themeInSession) {
+      setTheme(() => {
+        document.body.setAttribute('data-theme', themeInSession);
+        return themeInSession;
+      });
+    } else {
+      document.body.setAttribute('data-theme', theme);
+    }
   }, []);
+  
 
   return (
-    <UserContext.Provider value={{ userAuth, setUserAuth }}>
-      <Routes>
-        <Route path="/editor" element={<Editor />} />
-        <Route path="/editor/:blog_id" element={<Editor />} />
-        {/** parent route..Outlet should use in navbar otherwise we can't see any text and only navbar will display.it basically means rendering the nested route elements */}
-        <Route path="/" element={<Navbar />}>
-          {/** Here type is used as prop to change the sign-in and sign-up page in userAuthForm. */}
+    <ThemeContext.Provider value={{theme,setTheme}}>
+      <UserContext.Provider value={{ userAuth, setUserAuth }}>
+        <Routes>
+          <Route path="/editor" element={<Editor />} />
+          <Route path="/editor/:blog_id" element={<Editor />} />
+          {/** parent route..Outlet should use in navbar otherwise we can't see any text and only navbar will display.it basically means rendering the nested route elements */}
+          <Route path="/" element={<Navbar />}>
+            {/** Here type is used as prop to change the sign-in and sign-up page in userAuthForm. */}
 
-          <Route index element={<HomePage />} />
+            <Route index element={<HomePage />} />
 
-          <Route path="dashboard" element={<SideNav/>}>
-             <Route path="blogs" element={<ManageBlogs/>} />
-             <Route path="notifications" element={<Notifications/>} />
-           
+            <Route path="dashboard" element={<SideNav />}>
+              <Route path="blogs" element={<ManageBlogs />} />
+              <Route path="notifications" element={<Notifications />} />
+            </Route>
+
+            <Route path="settings" element={<SideNav />}>
+              <Route path="edit-profile" element={<EditProfile />} />
+              <Route path="change-password" element={<ChangePassword />} />
+            </Route>
+
+            <Route
+              path="signin"
+              element={<UserAuthForm key="signin" type="sign-in" />}
+            />
+            <Route
+              path="signup"
+              element={<UserAuthForm key="signup" type="sign-up" />}
+            />
+            <Route path="search/:query" element={<SearchPage />} />
+            <Route path="user/:id" element={<ProfilePage />} />
+            <Route path="blog/:blog_id" element={<BlogPage />} />
+            <Route path="*" element={<PageNotFound />} />
           </Route>
-
-
-
-          <Route path="settings" element={<SideNav/>}>
-             <Route path="edit-profile" element={<EditProfile/>} />
-             <Route path="change-password" element={<ChangePassword/>} />
-          </Route>
-
-
-          <Route
-            path="signin"
-            element={<UserAuthForm key="signin" type="sign-in" />}
-          />
-          <Route
-            path="signup"
-            element={<UserAuthForm key="signup" type="sign-up" />}
-          />
-          <Route 
-            path="search/:query" 
-            element={<SearchPage/>}
-          />
-          <Route path="user/:id" element={<ProfilePage/>}/>
-          <Route path="blog/:blog_id" element={<BlogPage/>}/>
-          <Route path="*" element = {<PageNotFound/>} />
-        </Route>
-      </Routes>
-    </UserContext.Provider>
+        </Routes>
+      </UserContext.Provider>
+    </ThemeContext.Provider>
   );
 };
 

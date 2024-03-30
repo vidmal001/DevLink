@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../imgs/scroll.png";
-import { UserContext } from "../App";
+import { ThemeContext, UserContext } from "../App";
 import UserNavigationPanel from "./user-navigation.component";
 import axios from "axios";
+import { storeInSession } from "../common/session";
 
 const Navbar = () => {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
@@ -14,6 +15,8 @@ const Navbar = () => {
     userAuth: { access_token, profile_img,new_notification_available},
     setUserAuth
   } = useContext(UserContext);
+
+  let { theme,setTheme } = useContext(ThemeContext);
 
   useEffect(() =>{
      if(access_token){
@@ -48,6 +51,14 @@ const Navbar = () => {
       navigate(`/search/${query}`);
     }
   };
+
+  const changeTheme = () =>{
+    let newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.body.setAttribute("data-theme",newTheme);
+    storeInSession("theme",newTheme);
+    
+  }
 
 
   return (
@@ -108,10 +119,11 @@ const Navbar = () => {
             <i className="fi fi-rr-dashboard"></i>
             <p>Performance</p>
           </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
-            <i className="fi fi-rr-book-alt"></i>
-            <p>Resume</p>
-          </Link>
+
+          <button className="w-12 h-12 rounded-full  bg-grey relative hover:bg-black/10" onClick={changeTheme}>
+              <i className={"fi fi-rr-" + (theme === "light" ? "moon-stars" : "sun" )+" text-2xl block mt-1"}></i>
+          </button>
+        
 
           {access_token ? (
             <>
