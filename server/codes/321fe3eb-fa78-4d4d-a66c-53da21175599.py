@@ -1,0 +1,2 @@
+# Example usage:
+print("sandaru");

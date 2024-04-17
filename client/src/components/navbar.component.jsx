@@ -1,36 +1,40 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import logo from "../imgs/scroll.png";
-import { UserContext } from "../App";
+import { ThemeContex, UserContext } from "../App";
 import UserNavigationPanel from "./user-navigation.component";
 import axios from "axios";
+import { storeInSession } from "../common/session";
 
 const Navbar = () => {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
   const [userNavPanel, setUserNavPanel] = useState(false);
+
+  let { theme, setTheme } = useContext(ThemeContex);
+
   let navigate = useNavigate();
   const {
     userAuth,
-    userAuth: { access_token, profile_img,new_notification_available},
-    setUserAuth
+    userAuth: { access_token, profile_img, new_notification_available },
+    setUserAuth,
   } = useContext(UserContext);
 
-  useEffect(() =>{
-     if(access_token){
-       axios.get(import.meta.env.VITE_SERVER_DOMAIN + "/new-notification",{
-         headers :{
-           'Authorization' : `Bearer ${access_token}`
-         }
-       })
-       .then(({ data }) =>{
-            setUserAuth({...userAuth, ...data})
-       })
-       .catch(err =>{
-         console.log(err);
-       })
-     }
-  },[access_token])
-
+  useEffect(() => {
+    if (access_token) {
+      axios
+        .get(import.meta.env.VITE_SERVER_DOMAIN + "/new-notification", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        })
+        .then(({ data }) => {
+          setUserAuth({ ...userAuth, ...data });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [access_token]);
 
   const handleUserNavPanel = () => {
     setUserNavPanel((currentVal) => !currentVal);
@@ -42,6 +46,13 @@ const Navbar = () => {
     }, 300);
   };
 
+  const changeTheme = () => {
+    let newTheme = theme == "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.body.setAttribute("data-theme",newTheme);
+    storeInSession("theme",newTheme);
+  }
+
   const handleSearch = (e) => {
     let query = e.target.value;
     if (e.keyCode == 13 && query.length) {
@@ -49,10 +60,9 @@ const Navbar = () => {
     }
   };
 
-
   return (
     <>
-      <nav className="navbar z-50">
+      <nav className="navbar z-50 border-b border-gray3 ">
         {/* logo section.
             Here if we use <a> tag browser will refresh the page.
             Because of that reason <Link> tag is using. 
@@ -108,23 +118,23 @@ const Navbar = () => {
             <i className="fi fi-rr-dashboard"></i>
             <p>Performance</p>
           </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
-            <i className="fi fi-rr-book-alt"></i>
-            <p>Resume</p>
-          </Link>
+
+          <button className="w-12 h-12 rounded-full  bg-grey relative hover:bg-black/10" onClick={changeTheme}>
+            <i className={"fi fi-rr-" + (theme == "light" ? "moon-stars" : "sun" ) + " text-2xl block mt-1"}></i>
+          </button>
 
           {access_token ? (
             <>
               <Link to="/dashboard/notifications">
                 <button className="w-12 h-12 rounded-full  bg-grey relative hover:bg-black/10">
                   <i className="fi fi-rr-bell text-2xl block mt-1"></i>
-                  {
-                    new_notification_available ? 
-                    <span className="bg-red/80 w-3 h-3 rounded-full absolute z-10 top-2 right-2">    </span>: ""
-                  }
-                  
-
-      
+                  {new_notification_available ? (
+                    <span className="bg-red/80 w-3 h-3 rounded-full absolute z-10 top-2 right-2">
+                      {" "}
+                    </span>
+                  ) : (
+                    ""
+                  )}
                 </button>
               </Link>
 

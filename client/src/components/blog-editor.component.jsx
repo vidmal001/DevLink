@@ -180,7 +180,7 @@ const BlogEditor = () => {
       </nav>
       <Toaster />
       <AnimationWrapper>
-        <section style={{ backgroundColor: "#f5f3ff" }}>
+        <section>
           <div className="mx-auto max-w-[900px] w-full">
             <div className="relative aspect-video hover:opacity-80 bg-white border-4 border-grey">
               <img src={banner} alt="Uploaded" onError={handleError} />
@@ -201,7 +201,7 @@ const BlogEditor = () => {
             <textarea
               defaultValue={title}
               placeholder="Question Title"
-              className="text-3xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
+              className="text-3xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40 bg-white"
               onKeyDown={handleTitleKeyDown}
               onChange={handleTitleChange}
             ></textarea>

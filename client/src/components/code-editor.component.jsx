@@ -65,7 +65,7 @@ const CodeEditor = ({ question }) => {
       </div>
       <Editor
         className="-ml-40"
-        theme="vs-light"
+        theme="vs-dark"
         height="59vh"
         width="148%" 
         onMount={handleEditorDidMount}

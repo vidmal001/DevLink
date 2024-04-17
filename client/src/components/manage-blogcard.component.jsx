@@ -6,14 +6,14 @@ import axios from "axios";
 
 const BlogStats = ({ stats }) => {
   return (
-    <div className="flex gap-2 max-lg:mb-6 max-lg:pb-6 border-grey max-lg:border-b">
+    <div className="flex gap-2 max-lg:mb-6 max-lg:pb-6 border-gray3 max-lg:border-b">
       {Object.keys(stats).map((key, i) => {
         return !key.includes("parent") ? (
           <div
             key={i}
             className={
               "flex flex-col items-center w-full h-full justify-center p-4 px-6 " +
-              (i !== 0 ? "border-grey border-l" : "")
+              (i !== 0 ? "border-gray3 border-l" : "")
             }
           >
             <h1 className="text-xl lg:text-xl mb-2">
@@ -41,7 +41,7 @@ export const ManagePublishBlogCard = ({ blog }) => {
 
   return (
     <>
-      <div className="flex gap-10 border-b mb-6 max-w-md border-grey pb-6 items-center">
+      <div className="flex gap-10 border-b mb-6 max-w-md border-gray3 pb-6 items-center">
         <img
           src={banner}
           className="max-md:hidden lg:hidden xl:block w-28 h-28 flex-none bg-grey object-cover"
