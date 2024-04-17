@@ -12,7 +12,7 @@ const MinimalBlogPost = ({ blog, index }) => {
     publishedAt,
   } = blog;
   return (
-    <Link to={`/blog/${id}`} className="flex gap-5 mb-8">
+    <Link to={`/blog/${id}`} className="flex gap-5 mb-5 hover:bg-grey px-3 py-3">
       <p className="blog-index">{index < 10 ? "0" + (index + 1) : index}</p>
       <div>
         <div className="flex gap-2 items-center mb-7">

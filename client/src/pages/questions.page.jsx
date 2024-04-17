@@ -142,7 +142,7 @@ const Questions = () => {
             ) : questions.results.length ? (
               <table className="w-full mb-7">
                 <thead>
-                  <tr className=" border-b border-grey text-xl font-medium ">
+                  <tr className=" border-b border-gray3 text-xl font-medium ">
                     <th className="text-left px-4 py-2">Title</th>
                     <th className="text-left px-4 py-2">Status</th>
                     <th className="text-left px-4 py-2">Solution</th>
@@ -207,7 +207,7 @@ const Questions = () => {
           </>
         </div>
 
-        <div className="min-w-[40%] lg:min-w-[400px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden">
+        <div className="min-w-[40%] lg:min-w-[400px] max-w-min border-l border-gray3 pl-8 pt-3 max-md:hidden">
           <div className="flex flex-col gap-10">
             <div>
               <h1 className="font-medium text-xl mb-8">

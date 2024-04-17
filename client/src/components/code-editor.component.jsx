@@ -47,7 +47,7 @@ const CodeEditor = ({ question }) => {
     <>
     <div className="border-b border-slate pb-4 mb-4 bg-slate">
       <button
-        className={`mt-5 ml-5 whitespace-nowrap bg-green rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80 ${
+        className={`mt-5 ml-5 whitespace-nowrap bg-green text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80 ${
           isLoading && "opacity-50 pointer-events-none"
         }`}
         onClick={getEditorValue}
@@ -57,7 +57,7 @@ const CodeEditor = ({ question }) => {
         {isLoading ? "Running..." : "Run"}{" "}
        
       </button>
-      <button className="mt-5 ml-3 whitespace-nowrap bg-green3 rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80">
+      <button className="mt-5 ml-3 whitespace-nowrap bg-green3 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80">
         <i className="fi fi-rr-cloud-upload-alt mr-2"></i>
         Submit
       </button>
@@ -65,7 +65,7 @@ const CodeEditor = ({ question }) => {
       </div>
       <Editor
         className="-ml-40"
-        theme="vs-dark"
+        theme="vs-light"
         height="59vh"
         width="148%" 
         onMount={handleEditorDidMount}

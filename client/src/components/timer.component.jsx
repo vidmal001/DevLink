@@ -34,7 +34,7 @@ const Timer = () => {
 
   return (
     <>
-      <button className="mt-5 ml-3 whitespace-nowrap bg-yellow2 rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80" onClick={isRunning ? stopTimer : startTimer}>
+      <button className="mt-5 ml-3 whitespace-nowrap bg-yellow2 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80" onClick={isRunning ? stopTimer : startTimer}>
         <i
           className={
             isRunning ? "fi fi-rr-pause mr-2" : "fi fi-rr-play mr-2"
@@ -42,12 +42,12 @@ const Timer = () => {
         ></i>
         {isRunning ? "Stop" : "Start"}
       </button>
-      <p1 className="mt-5 ml-3 whitespace-nowrap bg-purple2 rounded-full py-3 px-5 text-base capitalize hover:bg-opacity-80">
+      <button className="mt-5 ml-3 whitespace-nowrap bg-purple2 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80">
         <i className="fi fi-rr-alarm-clock mr-2"></i>
         {formatTime(timer)}
-      </p1>
+      </button>
 
-      <button className="mt-5 ml-3 whitespace-nowrap bg-red2 rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80" onClick={resetTimer}>
+      <button className="mt-5 ml-3 whitespace-nowrap bg-red2 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80" onClick={resetTimer}>
         <i className="fi fi-rr-refresh mr-2"></i>
         Reset
       </button>

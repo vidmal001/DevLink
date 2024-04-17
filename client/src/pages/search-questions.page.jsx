@@ -55,7 +55,7 @@ const SearchQuestions = () => {
               ) : questions.results.length ? (
                 <table className="w-full mb-7">
                   <thead>
-                    <tr className="bg-gray-100 border-b border-grey text-xl font-medium">
+                    <tr className=" border-b border-grey text-xl font-medium">
                       <th className="text-left px-4 py-2">Title</th>
                       <th className="text-left px-4 py-2">Status</th>
                       <th className="text-left px-4 py-2">Solution</th>
