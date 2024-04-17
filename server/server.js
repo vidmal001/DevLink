@@ -12,12 +12,18 @@ import Blog from "./Schema/Blog.js";
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
 
+import Question from "./Schema/Question.js";
+import generateFile from "./generateFile.js";
+import executePy from "./executePy.js";
+
+
 const server = express();
 let PORT = 3000;
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 
+server.use(express.urlencoded({ extended: true }));
 server.use(express.json()); // enable the json sharing and will accept json data from the frontend
 server.use(cors());
 
@@ -45,6 +51,26 @@ server.post("/upload", upload.single("file"), (req, res) => {
   const imageUrl = `/Images/${req.file.filename}`;
   res.json({ imageUrl });
 });
+
+server.post("/run", async (req, res) => {
+  const { language = "py", code } = req.body;
+  if (code === undefined) {
+    return res.status(400).json({ success: false, error: "Empty code body" });
+  }
+
+  try {
+    const filepath = await generateFile(language, code);
+    let output;
+    if (language === "py") {
+      output = await executePy(filepath);
+    }
+    return res.json({ filepath, output }); // Define output variable here
+  } catch (err) {
+    console.error("Error:", err);
+    return res.status(500).json({ error: "Internal Server Error", message: err.message });
+  }
+});
+
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -900,6 +926,156 @@ server.post("/delete-blog", verifyJWT, (req, res) => {
     });
     
 });
+
+server.post("/create-question", verifyJWT, async (req, res) => {
+  try {
+      const { title, banner, value,input, solution,explanation,link, companies, des, tags, difficulty } = req.body;
+      const authorId = req.user; // Assuming req.user contains the author's ID from authentication middleware
+      
+      // Convert tags and companies to lowercase
+      const formattedTags = tags.map(tag => tag.toLowerCase());
+      const formattedCompanies = companies.map(company => company.toLowerCase());
+
+      const question_id = title
+      .replace(/[^a-zA-Z0-9]/g, " ")
+      .replace(/\s+/g, "-")
+      .trim() + nanoid();
+      
+      // Create a new question document
+      const newQuestion = new Question({
+          question_id,
+          title,
+          banner,
+          value,
+          input,
+          solution,
+          explanation,
+          link,
+          companies: formattedCompanies,
+          des,
+          tags: formattedTags,
+          difficulty,
+          author: authorId
+      });
+
+      // Save the new question to the database
+      await newQuestion.save();
+
+      res.status(201).json({ message: "Question created successfully", question: newQuestion });
+  } catch (error) {
+      console.error("Error creating question:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+server.post("/latest-questions", (req, res) => {
+  let maxLimit = 2;
+  let { page } = req.body;
+
+  Question.find()
+    .populate(
+      "author",
+      "personal_info.profile_img personal_info.username personal_info.fullname -_id "
+    )
+    .sort({ publishedAt: -1 })
+    .select("question_id title banner input value solution explanation link companies des tags difficulty -_id")
+    .skip((page - 1) * maxLimit)
+    .limit(maxLimit)
+    .then((questions) => {
+      return res.status(200).json({ success: true, questions });
+    })
+    .catch((err) => {
+      return res.status(500).json({ success: false, error: err.message });
+    });
+});
+
+server.post("/all-latest-questions-count", (req, res) => {
+  Question.countDocuments()
+    .then((count) => {
+      return res.status(200).json({ success: true, totalDocs: count });
+    })
+    .catch((err) => {
+      console.log(err.message); 
+      return res.status(500).json({ success: false, error: err.message });
+    });
+});
+
+server.post("/get-question", (req, res) => {
+  let { question_id } = req.body; // Access question_id from request parameters
+  console.log(question_id);
+  Question.findOne({ question_id })
+    .populate(
+      "author",
+      "personal_info.fullname personal_info.username personal_info.profile_img"
+    )
+    .select("question_id title banner value input solution explanation link companies des tags difficulty publishedAt")
+    .then((question) => {
+      if (!question) {
+        return res.status(404).json({ error: "Question not found" });
+      }
+      res.json(question);
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
+});
+
+server.post("/search-questions", (req, res) => {
+  let { tag, query,company, author, page, limit, eliminate_question } = req.body;
+  let findQuery;
+  if (tag) {
+    findQuery = { tags: tag, question_id: { $ne: eliminate_question } };
+  } else if (query) {
+    findQuery = { title: new RegExp(query, "i") };
+  } else if (author) {
+    findQuery = { author};
+  }else if (company) {
+    findQuery = { companies: company };
+  }
+  
+  let maxLimit = limit ? limit : 2;
+
+  Question.find(findQuery)
+    .populate(
+      "author",
+      "personal_info.profile_img personal_info.username personal_info.fullname -_id "
+    )
+    .sort({ publishedAt: -1 })
+    .select("question_id title banner value input solution explanation link companies des tags difficulty -_id")
+    .skip((page - 1) * maxLimit)
+    .limit(maxLimit)
+    .then((questions) => {
+      return res.status(200).json({ questions });
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
+});
+
+server.post("/search-questions-count", (req, res) => {
+  let { tag, author, query,company } = req.body;
+  let findQuery;
+  if (tag) {
+    findQuery = { tags: tag };
+  } else if (query) {
+    findQuery = { title: new RegExp(query, "i") };
+  } else if (author) {
+    findQuery = { author};
+  }
+  else if (company) {
+    findQuery = { companies: company };
+  }
+   Question.countDocuments(findQuery)
+    .then((count) => {
+      return res.status(200).json({ totalDocs: count });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return res.status(500).json({ error: err.message });
+    });
+});
+
+
 
 server.listen(PORT, () => {
   console.log("listening on port " + PORT);

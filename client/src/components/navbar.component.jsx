@@ -92,13 +92,13 @@ const Navbar = () => {
             <i className="fi fi-rr-file-edit"></i>
             <p>Write</p>
           </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
+          <Link to="/code" className="hidden md:flex gap-2 link">
             <i className="fi fi-rr-square-code"></i>
             <p>Code</p>
           </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
+          <Link to="/code/add" className="hidden md:flex gap-2 link">
             <i className="fi fi-rr-heart-rate"></i>
-            <p>Health</p>
+            <p>Interview</p>
           </Link>
           <Link to="/editor" className="hidden md:flex gap-2 link">
             <i className="fi fi-rr-pencil-paintbrush"></i>
