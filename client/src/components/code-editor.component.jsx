@@ -120,7 +120,12 @@ const CodeEditor = ({ question }) => {
         ) : (
           <>
           <pre>{output}</pre>
-          {success && <p className="text-green2">Congrats! your code is correct.all Test cases passed! you can go ahead and submit the code now</p>} {/* Display success message */}
+          {success && (
+            <p className="text-green2">
+              Congrats! Your code is correct. All test cases passed! You can go ahead and submit the code now.
+            </p>
+          )}
+
         </>
         )}
       </div>
