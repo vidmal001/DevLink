@@ -110,15 +110,10 @@ const Navbar = () => {
             <i className="fi fi-rr-heart-rate"></i>
             <p>Interview</p>
           </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
-            <i className="fi fi-rr-pencil-paintbrush"></i>
-            <p>Tools</p>
-          </Link>
-          <Link to="/editor" className="hidden md:flex gap-2 link">
+          <Link to="/performance" className="hidden md:flex gap-2 link">
             <i className="fi fi-rr-dashboard"></i>
             <p>Performance</p>
           </Link>
-
           <button className="w-12 h-12 rounded-full  bg-grey relative hover:bg-black/10" onClick={changeTheme}>
             <i className={"fi fi-rr-" + (theme == "light" ? "moon-stars" : "sun" ) + " text-2xl block mt-1"}></i>
           </button>

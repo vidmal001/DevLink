@@ -105,6 +105,17 @@ const SideNav = () => {
               <i className="fi fi-rr-file-edit"></i>
               Write
             </NavLink>
+           
+            <NavLink
+              to="/dashboard/all-users"
+              onClick={(e) => setPageState(e.target.innerText)}
+              className="sidebar-link"
+            >
+              <i className="fi fi-rr-users-alt"></i>
+             Users
+            </NavLink>
+
+
             <h1 className="text-xl text-dark-grey mt-20 mb-3">Settings</h1>
             <hr className="border-gray3 -ml-6 mb-8 mr-6" />
             <NavLink

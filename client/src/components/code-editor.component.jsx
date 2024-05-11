@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useContext } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import Timer from "./timer.component";
+import { UserContext } from "../App";
+import { Toaster,toast } from "react-hot-toast";
 
 const CodeEditor = ({ question }) => {
   const { value,solution } = question;
@@ -10,6 +12,11 @@ const CodeEditor = ({ question }) => {
   const [isLoading, setIsLoading] = useState(false); 
   const [error, setError] = useState(null); 
   const [success, setSuccess] = useState(false);
+
+  let {
+    userAuth: { access_token },
+  } = useContext(UserContext);
+
 
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -43,6 +50,37 @@ const CodeEditor = ({ question }) => {
       });
   }
 
+  const handleSubmission = () => {
+    setIsLoading(true);
+    setError(null);
+    const answer = editorRef.current.getValue();
+    axios
+      .post(
+        import.meta.env.VITE_SERVER_DOMAIN + "/create-submission",
+        {
+          questionId: question._id,
+          answer,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccess(true);
+        toast.success("your code submitted successfully !");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setError("An error occurred while submitting the code.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+
   return (
     <>
     <div className="border-b border-slate pb-4 mb-4 bg-slate">
@@ -57,9 +95,12 @@ const CodeEditor = ({ question }) => {
         {isLoading ? "Running..." : "Run"}{" "}
        
       </button>
-      <button className="mt-5 ml-3 whitespace-nowrap bg-green3 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80">
+      <button className="mt-5 ml-3 whitespace-nowrap bg-green3 text-custom rounded-full py-2 px-5 text-base capitalize hover:bg-opacity-80"
+       onClick={handleSubmission}
+       disabled={isLoading}
+      >
         <i className="fi fi-rr-cloud-upload-alt mr-2"></i>
-        Submit
+        {isLoading ? "Submitting..." : "Submit"}
       </button>
       <Timer/>
       </div>

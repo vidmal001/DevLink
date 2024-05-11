@@ -11,8 +11,8 @@ import User from "./Schema/User.js";
 import Blog from "./Schema/Blog.js";
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
-
 import Question from "./Schema/Question.js";
+import Submission from "./Schema/Submission.js";
 import generateFile from "./generateFile.js";
 import executePy from "./executePy.js";
 
@@ -1075,7 +1075,225 @@ server.post("/search-questions-count", (req, res) => {
     });
 });
 
+server.post("/create-submission", verifyJWT, async (req, res) => {
+  try {
+    const { questionId, answer } = req.body;
+    const authorId = req.user;
+    const newSubmission = new Submission({
+      question: questionId,
+      author: authorId,
+      answer,
+    });
+    await newSubmission.save();
 
+    res.status(201).json({
+      message: "Submission created successfully",
+      submission: newSubmission,
+    });
+  } catch (error) {
+    console.error("Error creating submission:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+server.post("/user-latest-submissions",verifyJWT, (req, res) => {
+  let maxLimit = 10;
+  let { page } = req.body;
+  let user_id = req.user;
+
+  // Define variables to store counts
+  let easyCount = 0;
+  let mediumCount = 0;
+  let hardCount = 0;
+
+  Submission.find({ author: user_id })
+    .populate(
+      "question",
+      "question_id title banner input value solution explanation link companies des tags difficulty"
+    )
+    .sort({ publishedAt: -1 })
+    .select("answer publishedAt")
+    .skip((page - 1) * maxLimit)
+    .limit(maxLimit)
+    .then((submissions) => {
+      // Count the difficulty levels of submissions
+      submissions.forEach((submission) => {
+        if (submission.question.difficulty === 'easy') {
+          easyCount++;
+        } else if (submission.question.difficulty === 'medium') {
+          mediumCount++;
+        } else if (submission.question.difficulty === 'hard') {
+          hardCount++;
+        }
+      });
+
+      // Response object containing submissions and counts
+      let response = {
+        submissions: submissions,
+        counts: {
+          totalDocs: submissions.length,
+          easyCount: easyCount,
+          mediumCount: mediumCount,
+          hardCount: hardCount
+        }
+      };
+
+      return res.status(200).json(response);
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
+});
+
+
+server.post("/all-user-latest-submissions-count", verifyJWT, (req, res) => {
+  let user_id = req.user;
+    Submission.countDocuments({author: user_id})
+      .then((count) => {
+        return res.status(200).json({ totalDocs: count });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        return res.status(500).json({ error: err.message });
+      });
+  });
+  
+
+  server.post("/question-counts", async (req, res) => {
+    try {
+      const easyCount = await Question.countDocuments({ difficulty: "easy" });
+      const mediumCount = await Question.countDocuments({ difficulty: "medium" });
+      const hardCount = await Question.countDocuments({ difficulty: "hard" });
+      const totalDocs = await Question.countDocuments();
+  
+      const totalCounts = {
+        easyCount,
+        mediumCount,
+        hardCount,
+        totalDocs,
+      };
+  
+      res.json(totalCounts);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+
+  server.get("/top-users", (req, res) => {
+    Submission.aggregate([
+      {
+        $group: {
+          _id: "$author",
+          totalQuestions: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $sort: { totalQuestions: -1 }
+      },
+      {
+        $limit: 5
+      },
+      {
+        $project: {
+          _id: 0,
+          username: "$user.personal_info.username",
+          fullname: "$user.personal_info.fullname",
+          profile_img: "$user.personal_info.profile_img",
+          totalQuestions: 1
+        }
+      }
+    ])
+    .then((topUsers) => {
+      return res.status(200).json({ topUsers });
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
+  });
+  
+  server.post("/get-all-users", (req, res) => {
+    let maxLimit = 5;
+    let { page, role } = req.body;
+  
+    // Define roles to include based on user selection
+    let rolesToInclude = [];
+    if (role === "lecturer") {
+      rolesToInclude.push("lecturer");
+    } else {
+      rolesToInclude.push("student");
+    }
+  
+    User.find({ "personal_info.role": { $in: rolesToInclude } })
+      .sort({ joinedAt: -1 })
+      .select("personal_info.profile_img personal_info.username personal_info.fullname personal_info.role personal_info.email -_id")
+      .skip((page - 1) * maxLimit)
+      .limit(maxLimit)
+      .then((users) => {
+        return res.status(200).json({ success: true, users });
+      })
+      .catch((err) => {
+        return res.status(500).json({ success: false, error: err.message });
+      });
+  });
+  
+  server.post("/total-users-count", (req, res) => {
+    let { role } = req.body;
+  
+    // Define roles to include based on user selection
+    let rolesToInclude = [];
+    if (role === "lecturer") {
+      rolesToInclude.push("lecturer");
+    } else {
+      rolesToInclude.push("student");
+    }
+  
+    User.countDocuments({ "personal_info.role": { $in: rolesToInclude } })
+      .then((count) => {
+        return res.status(200).json({ success: true, totalDocs: count });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        return res.status(500).json({ success: false, error: err.message });
+      });
+  });
+  
+  server.post("/get-submission", (req, res) => {
+    let { submission_id } = req.body; 
+    console.log(submission_id);
+    Submission.findOne({ _id: submission_id }) 
+      .populate(
+        "author",
+        "personal_info.fullname personal_info.username personal_info.profile_img"
+      )
+    .populate(
+      "question",
+      "title banner value input solution link companies tags difficulty"
+    )
+      .select(
+        "answer publishedAt"
+      )
+      .then((submission) => {
+        if (!submission) {
+          return res.status(404).json({ error: "submission not found" });
+        }
+        res.json(submission);
+        console.log(submission);
+      })
+      .catch((err) => {
+        return res.status(500).json({ error: err.message });
+      });
+  });
+  
 
 server.listen(PORT, () => {
   console.log("listening on port " + PORT);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import InPageNavigation from "../components/inpage-navigation.component";
 import axios from "axios";
 import Loader from "../components/loader.component";
@@ -7,7 +7,8 @@ import { activeTabRef } from "../components/inpage-navigation.component";
 import NoDataMessage from "../components/nodata.component";
 import { filterPaginationData } from "../common/filter-pagination-data";
 import LoadMoreDataBtn from "../components/load-more.component";
-import { Link } from "react-router-dom";
+import {Navigate, Link } from "react-router-dom";
+import { UserContext } from "../App";
 import { useParams,useNavigate } from "react-router-dom";
 
 const Questions = () => {
@@ -17,6 +18,11 @@ const Questions = () => {
   let companies = ["virtusa", "ifs", "99x", "codegen", "syzco"];
 
   let navigate = useNavigate();
+  
+  let {
+    userAuth: { access_token },
+  } = useContext(UserContext);
+
 
   const fetchLatestQuestions = ({ page = 1 }) => {
     axios

@@ -18,6 +18,9 @@ import Questions from "./pages/questions.page";
 import QuestionsAdd from "./pages/questions-add.page";
 import QuestionPage from "./pages/question.page";
 import SearchQuestions from "./pages/search-questions.page";
+import Performance from "./pages/performance.page";
+import AllUsers from "./pages/all-users.page";
+import SubmissionPage from "./pages/submission.page";
 
 export const UserContext = createContext({});
 export const ThemeContex = createContext({});
@@ -55,11 +58,13 @@ const App = () => {
           {/** parent route..Outlet should use in navbar otherwise we can't see any text and only navbar will display.it basically means rendering the nested route elements */}
           <Route path="/" element={<Navbar />}>
             <Route path="/code" element={<Questions />} />
+            <Route path="/performance" element={<Performance/>}/>
             <Route index element={<HomePage />} />
 
             <Route path="dashboard" element={<SideNav />}>
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="all-users" element={<AllUsers/>} />
             </Route>
 
             <Route path="settings" element={<SideNav />}>
@@ -85,6 +90,7 @@ const App = () => {
             <Route path="user/:id" element={<ProfilePage />} />
             <Route path="blog/:blog_id" element={<BlogPage />} />
             <Route path="question/:question_id" element={<QuestionPage />} />
+            <Route path="submission/:submission_id" element={<SubmissionPage/>}/>
             <Route path="*" element={<PageNotFound />} />
           </Route>
         </Routes>
