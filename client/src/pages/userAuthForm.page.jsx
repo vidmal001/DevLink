@@ -102,7 +102,6 @@ const UserAuthForm = ({ type }) => {
                   </option>
                   <option value="student">Student</option>
                   <option value="lecturer">Lecturer</option>
-                  <option value="recruiter">Recruiter</option>
                 </select>
                 <i className={"fi fi-rr-users input-icon"}></i>
               </div>

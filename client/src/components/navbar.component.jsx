@@ -15,7 +15,7 @@ const Navbar = () => {
   let navigate = useNavigate();
   const {
     userAuth,
-    userAuth: { access_token, profile_img, new_notification_available },
+    userAuth: { access_token, profile_img, new_notification_available,role },
     setUserAuth,
   } = useContext(UserContext);
 
@@ -106,10 +106,12 @@ const Navbar = () => {
             <i className="fi fi-rr-square-code"></i>
             <p>Code</p>
           </Link>
-          <Link to="/code/add" className="hidden md:flex gap-2 link">
-            <i className="fi fi-rr-heart-rate"></i>
-            <p>Interview</p>
-          </Link>
+          {role === "lecturer" && ( // Conditionally render based on role
+            <Link to="/code/add" className="hidden md:flex gap-2 link">
+              <i className="fi fi-rr-heart-rate"></i>
+              <p>Interview</p>
+            </Link>
+          )}
           <Link to="/performance" className="hidden md:flex gap-2 link">
             <i className="fi fi-rr-dashboard"></i>
             <p>Performance</p>

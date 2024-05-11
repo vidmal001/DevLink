@@ -150,7 +150,6 @@ const Questions = () => {
                 <thead>
                   <tr className=" border-b border-gray3 text-xl font-medium ">
                     <th className="text-left px-4 py-2">Title</th>
-                    <th className="text-left px-4 py-2">Status</th>
                     <th className="text-left px-4 py-2">Solution</th>
                     <th className="text-left px-4 py-2">Difficulty</th>
                     <th className="text-left px-4 py-2">Author</th>
@@ -170,12 +169,10 @@ const Questions = () => {
                         </Link>
                       </td>
                       <td className="text-left px-4 py-4 justify-center">
-                        <i className="fi fi-rr-check text-green2"></i>
-                      </td>
-                      <td className="text-left px-4 py-4 justify-center">
                         <Link
                           to={question.link}
                           className="text-purple3 hover:text-black"
+                          target="_blank"
                         >
                           <i className="fi fi-rr-video-camera-alt"></i>
                         </Link>
