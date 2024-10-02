@@ -19,7 +19,7 @@
 
 
 ## 🤖 [Introduction](#introduction)
-DevLink is a collaborative learning and interview preparation platform designed to support computing students in Sri Lanka. It addresses challenges related to collaborative learning and interview preparation by offering a web application that facilitates knowledge sharing, promotes collaborative learning, and enhances interview readiness.
+DevLink is a web application designed to address key challenges faced by computing students in Sri Lanka. It facilitates collaborative learning and enhances interview preparation through features like role-based authentication, blog posting, nested comments, an interactive notification system, and an interview preparation module with a built-in code editor. The platform bridges the gap between academia and industry by fostering knowledge sharing and mentorship, making it easier for students to connect, learn, and succeed in their career journey.
 
 ## ⚙️ [Tech Stack](#tech-stack)
 
