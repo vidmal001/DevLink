@@ -9,7 +9,7 @@
 </p>
 
 
-# [DevLink: : A Collaborative Learning & Interview Preparation Platform](#DevLink)
+# [DevLink: A Collaborative Learning & Interview Preparation Platform](#DevLink)
 
 ## 📋 [Table of Contents](#table-of-contents)
 1. 🤖 [Introduction](#introduction)
