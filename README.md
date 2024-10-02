@@ -37,7 +37,7 @@ DevLink is a web application designed to address key challenges faced by computi
 
 👉 **Rich Content Editor**: A dynamic blog editor that supports images, code snippets, fonts, quotes, and previews.
 
-👉 **Interview Preparation Module**: Features a code editor, timed sessions, and filters for browsing questions by category and company.
+👉 **Interview Preparation Module**: This module allows lecturers to add new questions and includes features such as a code editor, timed sessions, and filters for browsing questions by category and company.
 
 👉 **Performance Tracking**: Students can track their progress, view leaderboards, and monitor their submissions.
 
@@ -45,7 +45,7 @@ DevLink is a web application designed to address key challenges faced by computi
 
 👉 **Light and Dark Themes**: Switch between light and dark modes for a personalized user experience.
 
-and many more, including code architecture and reusability.
+and many more..
 
 ## 🤸 [Quick Start](#quick-start)
 1. **Clone the repository**:
