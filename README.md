@@ -48,6 +48,13 @@ DevLink is a web application designed to address key challenges faced by computi
 and many more..
 
 ## 🤸 [Quick Start](#quick-start)
+
+Make sure you have the following installed on your machine:
+
+- [Node.js](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/) (Node Package Manager)
+- [Python](https://www.python.org/downloads/). Install Python 3.x from the official website. Ensure Python is added to your system's PATH. 
+  
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/vidmal001/DevLink.git
